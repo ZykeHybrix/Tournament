@@ -1,0 +1,236 @@
+<html>
+
+Import Players and Games :
+<div id="addPlayerFormDiv">
+	<input id="importPlayerList" name="importPlayerList" type="text" placeholder="import player list"/>
+	<input id="importGameList" name="importGameList" type="text" placeholder="import game list"/>
+	<button id="importButton" onclick="importLists();">Import</button>
+</div>
+
+Add Players :
+<div id="addPlayerFormDiv">
+	<input id="newPlayerName" name="newPlayerName" type="text" placeholder="new player name"/>
+	<button id="playerButton" onclick="addPlayer();">Add Player</button>
+</div>
+
+Add Games :
+<div id="addGameFormDiv">
+	<select id="gameResult" name="result">
+		<option value="1">Player One</option>
+		<option value="2">Player Two</option>
+	</select>
+	<input id="playerOneName" name="playerOneName" type="text" placeholder="player one name"/>
+	<input id="playerTwoName" name="playerTwoName" type="text" placeholder="player two name"/>
+	<button id="gameButton" onclick="addGame();">Add Game</button>
+</div>
+
+
+
+<div id="playerDiv"></div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<div id="debugDiv"></div>
+</html>
+<script>
+
+
+/*
+var playerOne = {name : 'Chris', gameResults : ['L', 'L', 'L'], pointTotal : 0};
+var playerTwo = {name : 'Bentley', gameResults : ['W', 'L', 'W'], pointTotal : 0};
+var playerThree = {name : 'Justin', gameResults : ['L', 'W', 'L'], pointTotal : 0};
+var playerFour = {name : 'Zac', gameResults : ['W', 'W', 'W'], pointTotal : 0};
+var playerList = [playerOne, playerTwo, playerThree, playerFour];
+*/
+
+var playerList = [];
+
+var totalPlayers = playerList.length;
+
+/*
+var gameOne = {playerOne : 'Chris', playerTwo : 'Bentley', result : '2'};
+var gameTwo = {playerOne : 'Zac', playerTwo : 'Justin', result : '1'};
+var gameThree = {playerOne : 'Chris', playerTwo : 'Justin', result : '2'};
+var gameFour = {playerOne : 'Bentley', playerTwo : 'Zac', result : '2'};
+var gameFive = {playerOne : 'Chris', playerTwo : 'Zac', result : '2'};
+var gameSix = {playerOne : 'Justin', playerTwo : 'Bentley', result : '2'};
+var gameList = [gameOne, gameTwo, gameThree, gameFour, gameFive, gameSix];
+*/
+
+var gameList = [];
+
+var playerDiv = document.getElementById("playerDiv");
+
+function displayLists() {
+
+	calculatePlacements();
+
+	var playerContents = '';
+	this.playerList.forEach(function(player, index){
+	
+		playerContents += "<div style='border-style: solid; height: 150px; width: 300px; float: left;'>";
+		playerContents += "Name : " + player.name;
+		playerContents += "<br />";
+		playerContents += "Placement : " + eval(index + 1);
+		playerContents += "<br />";
+		playerContents += "Point Total : " + player.pointTotal;
+		playerContents += "<br />";
+		
+		playerContents += "Games Played : ";
+		player.gameResults.forEach(function(result) {
+			//playerContents += result;
+			if (result === 'Win') {
+				playerContents += "&#128081";
+			}
+			if (result === 'Loss') {
+				playerContents += "&#10060";
+			}
+		});
+
+		playerContents += "</div>";
+	});
+	
+	this.playerDiv.innerHTML = playerContents;
+	
+	
+	displayDebug();
+}
+
+function calculatePlacements() {
+
+		this.playerList.forEach(function(player){
+		
+			player.pointTotal = 0;
+			player.gameResults = [];
+			
+			this.gameList.forEach(function(game) {
+		
+				if (game.playerOne === player.name && game.result === '1') {
+					player.gameResults.push('Win');
+					player.pointTotal += 3;
+				} 
+				else if (game.playerTwo === player.name && game.result === '2') {
+					player.gameResults.push('Win');
+					player.pointTotal += 3;
+				}
+				else if ((game.playerTwo === player.name && game.result === '1') || (game.playerOne === player.name && game.result === '2')){
+					player.gameResults.push('Loss');
+				}
+			});
+		});
+		
+		this.playerList.sort(function (a, b) {
+			return b.pointTotal - a.pointTotal;
+		});
+}
+
+function addGame() {
+	var playerOneNameInput = document.getElementById("playerOneName");
+	var playerOneNameValue = playerOneNameInput.value;
+	var playerTwoNameInput = document.getElementById("playerTwoName");
+	var playerTwoNameValue = playerTwoNameInput.value;
+	var gameResultInput = document.getElementById("gameResult");
+	var gameResultValue = gameResultInput.value;
+	var newObject = {};
+	
+	newObject.playerOne = playerOneNameValue;
+	newObject.playerTwo = playerTwoNameValue;
+	newObject.result = gameResultValue;
+
+	this.gameList.push(newObject);
+	
+	displayLists();
+};
+
+function addPlayer() {
+	var newPlayerNameInput = document.getElementById("newPlayerName");
+	var newPlayerNameValue = newPlayerNameInput.value;
+	var newObject = {};
+	
+	newObject.name = newPlayerNameValue;
+
+	this.playerList.push(newObject);
+	
+	updateGameForm();
+	displayLists();
+};
+
+function updateGameForm() {
+	var elem = document.getElementById("playerOneName"); 
+	elem.remove();
+	
+	var elem2 = document.getElementById("playerTwoName"); 
+	elem2.remove();
+	
+	var elem3 = document.getElementById("gameButton"); 
+	elem3.remove();
+	
+	var gameForm = document.getElementById("addGameFormDiv");
+
+	//Create and append select list
+	var selectList = document.createElement("select");
+	selectList.id = "playerOneName";
+	gameForm.appendChild(selectList);
+
+	//Create and append the options
+	this.playerList.forEach(function(player){
+		var option = document.createElement("option");
+		option.value = player.name;
+		option.text = player.name;
+		selectList.appendChild(option);
+	});
+	
+	var selectList2 = document.createElement("select");
+	selectList2.id = "playerTwoName";
+	gameForm.appendChild(selectList2);
+
+	//Create and append the options
+	this.playerList.forEach(function(player){
+		var option = document.createElement("option");
+		option.value = player.name;
+		option.text = player.name;
+		selectList2.appendChild(option);
+	});
+	
+	var button = document.createElement("button");
+	button.id = "gameButton";
+	button.name = "gameButton";
+	button.innerHTML = "Add Game";
+	gameForm.appendChild(button);
+
+	document.getElementById("gameButton").addEventListener("click", function(e) {
+		addGame();
+	});
+};
+
+function displayDebug() {
+	var debugDiv = document.getElementById("debugDiv");
+	
+	debugDiv.innerHTML = "Player List : " + JSON.stringify(this.playerList) + "<br /> Games List : " + JSON.stringify(this.gameList);
+}
+
+function importLists() {
+	var importPlayerListInput = document.getElementById("importPlayerList");
+	var importPlayerListValue = importPlayerListInput.value;
+
+	this.playerList = JSON.parse(importPlayerListValue);
+	
+	var importGameListInput = document.getElementById("importGameList");
+	var importGameListValue = importGameListInput.value;
+
+	this.gameList = JSON.parse(importGameListValue);
+	
+	updateGameForm();
+	displayLists();
+};
+
+displayLists();
+</script>
